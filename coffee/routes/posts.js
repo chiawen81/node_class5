@@ -54,6 +54,21 @@ router.get("/", async function (req, res) {
 });
 
 
+// 新增資料(添加錯誤訊息)
+router.post('/', async function (req, res, next) {
+    // query params
+    if (req.body.content == undefined) {
+        // 調整處
+        return next(appError(400, "你沒有填寫 content 資料"))
+    }
+    const newPost = await Post.create(req.body);
+    // res.send('<h1>1234</h1>');
+    res.status(200).json({
+        status: "success",
+        post: newPost
+    })
+});
+
 // // 新增資料
 // router.post("/", async function (req, res, next) {
 //     const newPost = await Post.create({

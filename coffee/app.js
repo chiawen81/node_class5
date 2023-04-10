@@ -5,7 +5,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors')
 
-
 // 資料庫設定開始
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/testPost6')
@@ -15,6 +14,7 @@ mongoose.connect('mongodb://localhost:27017/testPost6')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var postRouter = require('./routes/posts');
+const { default: axios } = require('axios');
 
 // 創建 Express 應用程式
 var app = express();
@@ -26,6 +26,21 @@ app.use(express.urlencoded({ extended: false }));        // 解析URL編碼格�
 app.use(cookieParser());                                 // 解析HTTP請求中的cookie資料
 app.use(express.static(path.join(__dirname, 'public'))); // 設定靜態檔案目錄
 app.use(cors());
+
+// 自訂錯誤處理
+app.use(function (err, req, res, next) {
+    res.status(500).json({
+        "err": err.message
+    });
+});
+
+// 未捕捉到的錯誤
+process.on('uncaughtException', (err, promise) => {
+    console.error('未捕捉到的 rejection：', promise, '原因：', reason);
+    console.error(err);
+    process.exit(1);
+});
+
 
 // 設定路由
 app.use('/', indexRouter);
